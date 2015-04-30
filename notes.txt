@@ -1,0 +1,7 @@
+Can't use bower.json because not in web path.  Can be solved by changing grunt file.
+
+Ignores overrides in bower.json.  Can use bowerIgnore.
+
+With these steal-tools bundeling doesn't work.
+
+steal-tools bundles-path is ignored.
