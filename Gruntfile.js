@@ -404,7 +404,7 @@ module.exports = function (grunt) {
             main: 'scripts/boot',
             config: './app/config.js',
             //config: "bower.json!bower",
-            bundlesPath: 'bundles'
+            bundlesPath: __dirname + '/app/bundles'
           },
           buildOptions: {
             minify: true
