@@ -1,6 +1,8 @@
 'use strict';
 
-import app from 'scripts/app';
+import 'components/main/main.css!';
+
+import app from 'components/app';
 
 /**
  * @ngdoc function

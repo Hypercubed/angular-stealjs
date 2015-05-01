@@ -8,3 +8,8 @@ System.config({
     }
   }
 });
+
+System.paths["bundles/*.css"] ="bundles/*css";
+System.paths["bundles/*"] = "bundles/*.js";
+System.paths["bower_components/bootstrap/dist/fonts/*"] = "fonts/*";
+System.paths["bower_components/bootstrap/dist/fonts/*.ttf"] = "fonts/*.ttf";

@@ -35,7 +35,7 @@ module.exports = function (grunt) {
     // Watches files for changes and runs tasks based on the changed files
     watch: {
       js: {
-        files: ['<%= yeoman.app %>/scripts/{,*/}*.js'],
+      files: ['<%= yeoman.app %>/components/{,*/}*.js'],
         tasks: ['newer:jshint:all'],
         options: {
           livereload: '<%= connect.options.livereload %>'
@@ -45,10 +45,10 @@ module.exports = function (grunt) {
         files: ['test/spec/{,*/}*.js'],
         tasks: ['newer:jshint:test', 'karma']
       },
-      styles: {
-        files: ['<%= yeoman.app %>/styles/{,*/}*.css'],
-        tasks: ['newer:copy:styles', 'autoprefixer']
-      },
+      //styles: {
+      //  files: ['<%= yeoman.app %>/components/{,*/}*.css'],
+      //  tasks: ['newer:copy:styles', 'autoprefixer']
+      //},
       gruntfile: {
         files: ['Gruntfile.js']
       },
@@ -58,7 +58,8 @@ module.exports = function (grunt) {
         },
         files: [
           '<%= yeoman.app %>/{,*/}*.html',
-          '.tmp/styles/{,*/}*.css',
+          //'.tmp/styles/{,*/}*.css',
+          '<%= yeoman.app %>/components/{,*/}*.css',
           '<%= yeoman.app %>/images/{,*/}*.{png,jpg,jpeg,gif,webp,svg}'
         ]
       }
@@ -112,7 +113,7 @@ module.exports = function (grunt) {
       all: {
         src: [
           'Gruntfile.js',
-          '<%= yeoman.app %>/scripts/{,*/}*.js'
+        '<%= yeoman.app %>/components/{,*/}*.js'
         ]
       },
       test: {
@@ -140,42 +141,42 @@ module.exports = function (grunt) {
     },
 
     // Add vendor prefixed styles
-    autoprefixer: {
-      options: {
-        browsers: ['last 1 version']
-      },
-      server: {
-        options: {
-          map: true,
-        },
-        files: [{
-          expand: true,
-          cwd: '.tmp/styles/',
-          src: '{,*/}*.css',
-          dest: '.tmp/styles/'
-        }]
-      },
-      dist: {
-        files: [{
-          expand: true,
-          cwd: '.tmp/styles/',
-          src: '{,*/}*.css',
-          dest: '.tmp/styles/'
-        }]
-      }
-    },
+    ///autoprefixer: {
+    //  options: {
+    //    browsers: ['last 1 version']
+    //  },
+    //  server: {
+    //    options: {
+    //      map: true,
+    //    },
+    //    files: [{
+    //      expand: true,
+    //      cwd: '.tmp/styles/',
+    //      src: '{,*/}*.css',
+    //      dest: '.tmp/styles/'
+    //    }]
+    //  },
+    //  dist: {
+    //    files: [{
+    //      expand: true,
+    //      cwd: '.tmp/styles/',
+    //      src: '{,*/}*.css',
+    //      dest: '.tmp/styles/'
+    //    }]
+    //  }
+    //},
 
     // Renames files for browser caching purposes
-    filerev: {
-      dist: {
-        src: [
-          '<%= yeoman.dist %>/scripts/{,*/}*.js',
-          '<%= yeoman.dist %>/styles/{,*/}*.css',
-          '<%= yeoman.dist %>/images/{,*/}*.{png,jpg,jpeg,gif,webp,svg}',
-          '<%= yeoman.dist %>/styles/fonts/*'
-        ]
-      }
-    },
+    // filerev: {
+    //  dist: {
+    //    src: [
+    //      '<%= yeoman.dist %>/scripts/{,*/}*.js',
+    //      '<%= yeoman.dist %>/styles/{,*/}*.css',
+    //      '<%= yeoman.dist %>/images/{,*/}*.{png,jpg,jpeg,gif,webp,svg}',
+    //      '<%= yeoman.dist %>/styles/fonts/*'
+    //    ]
+    //  }
+    //},
 
     // Reads HTML for usemin blocks to enable smart builds that automatically
     // concat, minify and revision files. Creates configurations in memory so
@@ -307,9 +308,11 @@ module.exports = function (grunt) {
             '*.{ico,png,txt}',
             '.htaccess',
             '*.html',
-            'views/{,*/}*.html',
+            '*.js{,on}',
+            'components/{,*/}*.html',
             'images/{,*/}*.{webp}',
-            'styles/fonts/{,*/}*.*'
+            'bundles/{,*/}*',
+            //'styles/fonts/{,*/}*.*'
           ]
         }, {
           expand: true,
@@ -318,9 +321,9 @@ module.exports = function (grunt) {
           src: ['generated/*']
         }, {
           expand: true,
-          cwd: 'bower_components/bootstrap/dist',
+          cwd: '<%= yeoman.app %>/bower_components/bootstrap/dist',
           src: 'fonts/*',
-          dest: '<%= yeoman.dist %>'
+          dest: '<%= yeoman.dist %>/bower_components/bootstrap/dist'
         }]
       },
       styles: {
@@ -353,21 +356,28 @@ module.exports = function (grunt) {
         singleRun: true
       }
     },
+    
+    processhtml: {
+      dist: {
+        files: {
+          'dist/index.html': ['<%= yeoman.app %>/index.html']
+        }
+      }
+    },
 
     'steal-build': {
       server: {
         options: {
           system: {
-            main: 'scripts/boot',
-            config: '<%= yeoman.app %>/config.js',
-            //config: "bower.json!bower",
+            baseURL: "app",
+            main: 'components/boot',
+            config: 'app/config.js',
             bundlesPath: 'bundles',
-            //configDependencies: [
-            //  "bower.json!bower"
-            //]
           },
           buildOptions: {
-            minify: true
+            minify: false,
+            bundleSteal: true,
+            sourceMaps: true
           }
         }
       }
@@ -384,7 +394,7 @@ module.exports = function (grunt) {
       'clean:server',
       //'wiredep',
       'concurrent:server',
-      'autoprefixer:server',
+      //'autoprefixer:server',
       'connect:livereload',
       'watch'
     ]);
@@ -394,7 +404,7 @@ module.exports = function (grunt) {
     'clean:server',
     //'wiredep',
     'concurrent:test',
-    'autoprefixer',
+    //'autoprefixer',
     'connect:test',
     'karma'
   ]);
@@ -402,17 +412,19 @@ module.exports = function (grunt) {
   grunt.registerTask('build', [
     'clean:dist',
     //'wiredep',
-    'useminPrepare',
+    //'useminPrepare',
     'concurrent:dist',
-    'autoprefixer',
-    'concat',
-    'ngAnnotate',
+    //'autoprefixer',
+    //'concat',
+    //'ngAnnotate',
+    'steal-build',
     'copy:dist',
-    'cdnify',
-    'cssmin',
-    'uglify',
-    'filerev',
-    'usemin',
+    //'cdnify',
+    //'cssmin',
+    //'uglify',
+    //'filerev',
+    //'usemin',
+    'processhtml',
     'htmlmin'
   ]);
 
