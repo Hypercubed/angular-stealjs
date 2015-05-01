@@ -21,7 +21,8 @@ module.exports = function (grunt) {
 
   // Configurable paths for the application
   var appConfig = {
-    app: require('./bower.json').appPath || 'app',
+    configFile: './app/bower.json',
+    app: require('./app/bower.json').appPath || 'app',
     dist: 'dist'
   };
 
@@ -33,10 +34,6 @@ module.exports = function (grunt) {
 
     // Watches files for changes and runs tasks based on the changed files
     watch: {
-      bower: {
-        files: ['bower.json'],
-        tasks: ['wiredep']
-      },
       js: {
         files: ['<%= yeoman.app %>/scripts/{,*/}*.js'],
         tasks: ['newer:jshint:all'],
@@ -80,20 +77,7 @@ module.exports = function (grunt) {
           open: true,
           middleware: function (connect) {
             return [
-              //connect.static(appConfig.dist),
               connect.static('.tmp'),
-              connect().use(
-                '/bower_components',
-                connect.static('./bower_components')
-              ),
-              connect().use(
-                '/bower.json',
-                connect.static('./bower.json')
-              ),
-              connect().use(
-                '/app/styles',
-                connect.static('./app/styles')
-              ),
               connect.static(appConfig.app)
             ];
           }
@@ -106,10 +90,6 @@ module.exports = function (grunt) {
             return [
               connect.static('.tmp'),
               connect.static('test'),
-              connect().use(
-                '/bower_components',
-                connect.static('./bower_components')
-              ),
               connect.static(appConfig.app)
             ];
           }
@@ -150,6 +130,7 @@ module.exports = function (grunt) {
           dot: true,
           src: [
             '.tmp',
+            '<%= yeoman.app %>/bundles',
             '<%= yeoman.dist %>/{,*/}*',
             '!<%= yeoman.dist %>/.git{,*/}*'
           ]
@@ -184,30 +165,6 @@ module.exports = function (grunt) {
       }
     },
 
-    // Automatically inject Bower components into the app
-    wiredep: {
-      app: {
-        src: ['<%= yeoman.app %>/index.html'],
-        ignorePath:  /\.\.\//
-      },
-      test: {
-        devDependencies: true,
-        src: '<%= karma.unit.configFile %>',
-        ignorePath:  /\.\.\//,
-        fileTypes:{
-          js: {
-            block: /(([\s\t]*)\/{2}\s*?bower:\s*?(\S*))(\n|\r|.)*?(\/{2}\s*endbower)/gi,
-              detect: {
-                js: /'(.*\.js)'/gi
-              },
-              replace: {
-                js: '\'{{filePath}}\','
-              }
-            }
-          }
-      }
-    },
-
     // Renames files for browser caching purposes
     filerev: {
       dist: {
@@ -223,7 +180,7 @@ module.exports = function (grunt) {
     // Reads HTML for usemin blocks to enable smart builds that automatically
     // concat, minify and revision files. Creates configurations in memory so
     // additional tasks can operate on them
-    useminPrepare: {
+    /* useminPrepare: {
       html: '<%= yeoman.app %>/index.html',
       options: {
         dest: '<%= yeoman.dist %>',
@@ -237,20 +194,20 @@ module.exports = function (grunt) {
           }
         }
       }
-    },
+    }, */
 
     // Performs rewrites based on filerev and the useminPrepare configuration
-    usemin: {
-      html: ['<%= yeoman.dist %>/{,*/}*.html'],
-      css: ['<%= yeoman.dist %>/styles/{,*/}*.css'],
-      options: {
-        assetsDirs: [
-          '<%= yeoman.dist %>',
-          '<%= yeoman.dist %>/images',
-          '<%= yeoman.dist %>/styles'
-        ]
-      }
-    },
+    // usemin: {
+    //  html: ['<%= yeoman.dist %>/{,*/}*.html'],
+    //  css: ['<%= yeoman.dist %>/styles/{,*/}*.css'],
+    //  options: {
+    //    assetsDirs: [
+    //      '<%= yeoman.dist %>',
+    //      '<%= yeoman.dist %>/images',
+    //      '<%= yeoman.dist %>/styles'
+    //    ]
+    //  }
+    //},
 
     // The following *-min tasks will produce minified files in the dist folder
     // By default, your `index.html`'s <!-- Usemin block --> will take care of
@@ -320,23 +277,23 @@ module.exports = function (grunt) {
 
     // ng-annotate tries to make the code safe for minification automatically
     // by using the Angular long form for dependency injection.
-    ngAnnotate: {
-      dist: {
-        files: [{
-          expand: true,
-          cwd: '.tmp/concat/scripts',
-          src: '*.js',
-          dest: '.tmp/concat/scripts'
-        }]
-      }
-    },
+    //ngAnnotate: {
+    //  dist: {
+    //    files: [{
+    //      expand: true,
+    //      cwd: '.tmp/concat/scripts',
+    //      src: '*.js',
+    //      dest: '.tmp/concat/scripts'
+    //    }]
+    //  }
+    //},
 
     // Replace Google CDN references
-    cdnify: {
-      dist: {
-        html: ['<%= yeoman.dist %>/*.html']
-      }
-    },
+    //cdnify: {
+    //  dist: {
+    //    html: ['<%= yeoman.dist %>/*.html']
+    //  }
+    //},
 
     // Copies remaining files to places other tasks can use
     copy: {
@@ -402,9 +359,12 @@ module.exports = function (grunt) {
         options: {
           system: {
             main: 'scripts/boot',
-            config: './app/config.js',
+            config: '<%= yeoman.app %>/config.js',
             //config: "bower.json!bower",
-            bundlesPath: 'bundles'
+            bundlesPath: 'bundles',
+            //configDependencies: [
+            //  "bower.json!bower"
+            //]
           },
           buildOptions: {
             minify: true
@@ -422,7 +382,7 @@ module.exports = function (grunt) {
 
     grunt.task.run([
       'clean:server',
-      'wiredep',
+      //'wiredep',
       'concurrent:server',
       'autoprefixer:server',
       'connect:livereload',
@@ -430,14 +390,9 @@ module.exports = function (grunt) {
     ]);
   });
 
-  grunt.registerTask('server', 'DEPRECATED TASK. Use the "serve" task instead', function (target) {
-    grunt.log.warn('The `server` task has been deprecated. Use `grunt serve` to start a server.');
-    grunt.task.run(['serve:' + target]);
-  });
-
   grunt.registerTask('test', [
     'clean:server',
-    'wiredep',
+    //'wiredep',
     'concurrent:test',
     'autoprefixer',
     'connect:test',
@@ -446,7 +401,7 @@ module.exports = function (grunt) {
 
   grunt.registerTask('build', [
     'clean:dist',
-    'wiredep',
+    //'wiredep',
     'useminPrepare',
     'concurrent:dist',
     'autoprefixer',

@@ -24,11 +24,6 @@
       ]
     }
   },
-  "system": {
-    "bowerIgnore": [
-      "bootstrap"
-    ]
-  },
   "appPath": "app",
   "moduleName": "angularStealjsApp"
 }
