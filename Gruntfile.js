@@ -21,8 +21,8 @@ module.exports = function (grunt) {
 
   // Configurable paths for the application
   var appConfig = {
-    configFile: './app/bower.json',
-    app: require('./app/bower.json').appPath || 'app',
+    configFile: './bower.json',
+    app: require('./bower.json').appPath || '.',
     dist: 'dist'
   };
 
@@ -240,9 +240,9 @@ module.exports = function (grunt) {
       dist: {
         files: [{
           expand: true,
-          cwd: '<%= yeoman.app %>/images',
+          cwd: '<%= yeoman.app %>/app/images',
           src: '{,*/}*.{png,jpg,jpeg,gif}',
-          dest: '<%= yeoman.dist %>/images'
+          dest: '<%= yeoman.dist %>/app/images'
         }]
       }
     },
@@ -305,13 +305,14 @@ module.exports = function (grunt) {
           cwd: '<%= yeoman.app %>',
           dest: '<%= yeoman.dist %>',
           src: [
-            '*.{ico,png,txt}',
+            '*.{ico,png}',
             '.htaccess',
             '*.html',
-            '*.js{,on}',
-            'components/{,*/}*.html',
-            'images/{,*/}*.{webp}',
-            'bundles/{,*/}*',
+            'bower.json',
+            'system.config.json',
+            'app/components/{,*/}*.html',
+            'app/images/{,*/}*.{webp}',
+            //'bundles/{,*/}*',
             //'styles/fonts/{,*/}*.*'
           ]
         }, {
@@ -323,7 +324,7 @@ module.exports = function (grunt) {
           expand: true,
           cwd: '<%= yeoman.app %>/bower_components/bootstrap/dist',
           src: 'fonts/*',
-          dest: '<%= yeoman.dist %>/bower_components/bootstrap/dist'
+          dest: '<%= yeoman.dist %>/bundles/app/components'
         }]
       },
       styles: {
@@ -356,7 +357,7 @@ module.exports = function (grunt) {
         singleRun: true
       }
     },
-    
+
     processhtml: {
       dist: {
         files: {
@@ -369,10 +370,10 @@ module.exports = function (grunt) {
       server: {
         options: {
           system: {
-            baseURL: "app",
-            main: 'components/boot',
-            config: 'app/config.js',
-            bundlesPath: 'bundles',
+            baseURL: "",
+            main: 'app/components/boot',
+            config: 'system.config.js',
+            bundlesPath: 'dist/bundles',
           },
           buildOptions: {
             minify: false,

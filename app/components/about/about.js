@@ -1,6 +1,14 @@
 'use strict';
 
-import app from 'components/app';
+import app from 'app/components/app';
+
+class AboutCtrl {
+  /*@ngInject*/
+  constructor(){
+    this.value = 0;
+    console.log('about!');
+  }
+}
 
 /**
  * @ngdoc function
@@ -10,6 +18,4 @@ import app from 'components/app';
  * Controller of the angularStealjsApp
  */
 app
-  .controller('AboutCtrl', [function () {
-
-  }]);
+  .controller('AboutCtrl', AboutCtrl);
